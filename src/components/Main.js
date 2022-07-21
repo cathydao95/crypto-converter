@@ -4,7 +4,7 @@ function Main() {
   const [inputAmount, setInputAmount] = useState(1);
   const [currency, setCurrency] = useState("USD");
   const [wuc, setWuc] = useState();
-  const [history, setHistory] = useState([]);
+  const [testArray, setTestArray] = useState([0]);
 
   useEffect(() => {
     async function fetchData() {
@@ -18,8 +18,13 @@ function Main() {
     }, 10000);
 
     fetchData();
+
     return () => clearInterval(interval);
   }, [currency, inputAmount]);
+
+  useEffect(() => {
+    wuc && setTestArray((prevArray) => [wuc, ...prevArray]);
+  }, [wuc]);
 
   function handleCurrency(event) {
     setCurrency(event.target.value);
@@ -28,12 +33,14 @@ function Main() {
   function handleInput(event) {
     setTimeout(() => {
       setInputAmount(event.target.value);
-    }, 1000);
+    }, 500);
   }
 
-  //   console.log("history", history);
   //   console.log("wuc", wuc);
+  console.log("test", testArray);
 
+  const change = (testArray[0] - testArray[1]).toFixed(2);
+  console.log("CHANGE", change);
   return (
     <div>
       <form className="form-container">
@@ -51,7 +58,14 @@ function Main() {
           <option value="JPY">JPY</option>
         </select>
       </form>
-      <h2>{wuc} WUC</h2>
+      <h2 className="price-info">
+        <div>{wuc} </div>
+        <div>WUC</div>
+        <div className={change > 0 ? "green" : "red"}>
+          {testArray.length > 1 && change > 0 ? "↑" : "↓"}
+          {testArray.length > 1 && change}
+        </div>
+      </h2>
     </div>
   );
 }
